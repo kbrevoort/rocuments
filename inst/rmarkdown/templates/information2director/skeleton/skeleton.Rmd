@@ -1,0 +1,38 @@
+---
+from: 
+- "Ken Brevoort, x5-4916"
+- "Michelle Kambara"
+through:  "David Silberman, Associate Director RMR"
+subject:  "Sample Memo"
+memo_date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+  rocuments::information_memo:
+    reference_docx: just_table.docx
+---
+
+???HEADER???
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(ggplot2)
+library(magrittr)
+library(bookdown)
+```
+
+# Summary
+
+This is summarizes an interesting memo.
+
+# Analysis
+
+This is where we describe the subject matter.  We can hard code specific numbers, like the average temperature was `r mean(pressure$temperature) %>% round()`.  We can also include plots as follows in Figure \@ref(fig:fig1).
+
+```{r fig1, fig.cap = 'Relationship between Pressure and Temperature'}
+ggplot(pressure, aes(x = temperature, y = pressure)) + 
+  geom_line() + 
+  xlab('Temperature') + 
+  ylab('Pressure') + 
+  theme_bw()
+```
+
