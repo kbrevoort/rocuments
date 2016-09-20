@@ -39,6 +39,9 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
     if (file.exists(my_file)) {
       new_file <- sprintf('%s_old.docx', my_file)
       file.rename(from = my_file, to = new_file)
+
+      if (file.exists('rocument_temp'))
+        unlink('rocument_temp', recursive = TRUE)
       unzip(new_file, exdir = 'rocument_temp')
 
       # Now get the header material to add
@@ -85,7 +88,7 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
       file.rename(from = my_file,
                   to = sprintf('../%s', my_file))
       setwd('..')
-      #unlink('rocument_temp', recursive = TRUE)
+      unlink('rocument_temp', recursive = TRUE)
     } else {
       stop('rocument:  Knitr file output does not seem to exist.')
     }
