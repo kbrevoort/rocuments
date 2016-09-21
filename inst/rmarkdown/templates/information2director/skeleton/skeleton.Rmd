@@ -6,8 +6,8 @@ through:  "David Silberman, Associate Director RMR"
 subject:  "Sample Memo"
 memo_date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: 
-  rocuments::information_memo:
-    reference_docx: just_table.docx
+  bookdown::word_document2:
+    keep_md: true
 ---
 
 ???HEADER???

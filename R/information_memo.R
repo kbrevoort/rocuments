@@ -4,38 +4,23 @@
 #' @export
 information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_args = NULL, ...) {
 
+  r_docx <- "../resources/information2director_template.docx"
   config <- bookdown::word_document2(fig_caption = fig_caption,
                                      md_extensions = md_extensions,
                                      pandoc_args = pandoc_args,
+                                     reference_docx = r_docx,
                                      ...)
-
-#  pre <- config$pre_processor
-#  config$pre_processor <- function(metadata, input_file, ...) {
-#    cat(input_file)
-#    if (is.function(pre))
-#      pre(metadata, input_file, ...)
-#  }
-
-#  config$post_processor <- function(metadata, input_file, output_file, clean, verbose) {
-#    saveRDS(metadata, 'rocument_metadata.RDS')
-#    my_envir <- parent.frame()
-#    print(my_envir$knit_output)
-#    print(sprintf('%s/%s',
-#                  my_envir$output_dir,
-#                  my_envir$output_file))
-#    #print(ls(envir = parent.frame()))
-##    print(metadata)
-##    print(input_file)
-##    print(output_file)
-##    cat(getwd())
-#    cat('here')
-#    output_file
-#  }
 
   config$on_exit <- function() {
     # At this point, the output file will have been created.  Verify this to start.
     my_envir <- parent.frame()
-    my_file <- sprintf('%s/%s', my_envir$output_dir, my_envir$output_file)
+
+    if (my_envir$output_dir == '.') {
+      my_file <- my_envir$output_file
+    } else {
+      my_file <- sprintf('%s/%s', my_envir$output_dir, my_envir$output_file)
+    }
+
     if (file.exists(my_file)) {
       new_file <- sprintf('%s_old.docx', my_file)
       file.rename(from = my_file, to = new_file)
@@ -46,7 +31,7 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
 
       # Now get the header material to add
       #header_xml <- get_header_info(my_envir$yaml_front_matter)
-      new_header <- get_header_info(my_envir$yaml_front_matter)
+      new_header <- get_header_info(my_envir$yaml_front_matter, r_docx)
 
       # Remove any bookmarks from the XML
       invisible(lapply(xml_find_all(new_header, '//w:bookmarkStart'), xml_remove))
@@ -58,7 +43,7 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
       # are not included in in_file.  I am hoping this will eliminate the
       # corrupt file errors that I am encountering when I try to open
       # the file in Word.
-      new_header <- clean_namespace(new_header, in_file)
+      #new_header <- clean_namespace(new_header, in_file)
       new_header <- xml_children(xml_child(new_header, 1))
 
       my_text <- xml_find_all(in_file, '//w:p')
@@ -74,17 +59,9 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
       }
       write_xml(in_file, 'rocument_temp/word/document.xml')
 
-      #j <- read_xml('rocument_temp/word/document.xml')
-      #k <- xml_find_all(j, "//w:p")
-      #for (i in seq_along(k)) {
-      #  if (grepl(pattern = "&lt;---HEADER---&gt;", k[[i]])) {
-      #    k[i] <- "<w:p><w:pPr><w:pStyle w:val=\"Heading4\"/></w:pPr><w:r><w:t>Information memorandum for the Director</w:t></w:r></w:p>"
-      #  }
-      #}
-      #write_xml(k, 'rocument_temp/word/document.xml')
-
       setwd('rocument_temp')
-      zip(my_file, files = list.files())
+
+      zip(my_file, files = list.files(), flags = '-r', zip = 'zip')
       file.rename(from = my_file,
                   to = sprintf('../%s', my_file))
       setwd('..')
@@ -92,13 +69,6 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
     } else {
       stop('rocument:  Knitr file output does not seem to exist.')
     }
-    # print(file.exists(sprintf('%s/%s',
-    #                           my_envir$output_dir,
-    #                           my_envir$output_file)))
-    # cat(getwd())
-    # print(ls(envir = parent.frame()))
-    # print(my_envir$yaml_front_matter)
-    # print(my_envir$knit_input)
   }
   config
 }
@@ -107,7 +77,7 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
 #'
 #' This function will read in the header reference file and replace any codes with
 #' values supplied in the YAML header.
-get_header_info <- function(yaml_front_matter) {
+get_header_info <- function(yaml_front_matter, r_docx) {
 
   yaml_front_matter <- convert_yaml(yaml_front_matter)
 
@@ -115,7 +85,7 @@ get_header_info <- function(yaml_front_matter) {
 
   # First, read in the header file.  Since I'm not writing the XML file out, I can
   # read directly from a docx file
-  in_file <- read_xml(unz('just_table.docx', 'word/document.xml'))
+  in_file <- read_xml(unz(r_docx, 'word/document.xml'))
 
   # Check to make sure that in_file has only one child (otherwise, something is wrong)
   if (xml_length(in_file) > 1)
