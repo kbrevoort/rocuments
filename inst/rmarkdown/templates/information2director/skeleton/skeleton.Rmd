@@ -1,13 +1,10 @@
 ---
 from: 
 - "Ken Brevoort, x5-4916"
-- "Michelle Kambara"
 through:  "David Silberman, Associate Director RMR"
-subject:  "Sample Memo"
+subject:  "Subject"
 memo_date: "`r format(Sys.Date(), '%B %d, %Y')`"
-output: 
-  bookdown::word_document2:
-    keep_md: true
+output: rocuments::information_memo
 ---
 
 ???HEADER???
