@@ -9,29 +9,6 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
                                      pandoc_args = pandoc_args,
                                      ...)
 
-#  pre <- config$pre_processor
-#  config$pre_processor <- function(metadata, input_file, ...) {
-#    cat(input_file)
-#    if (is.function(pre))
-#      pre(metadata, input_file, ...)
-#  }
-
-#  config$post_processor <- function(metadata, input_file, output_file, clean, verbose) {
-#    saveRDS(metadata, 'rocument_metadata.RDS')
-#    my_envir <- parent.frame()
-#    print(my_envir$knit_output)
-#    print(sprintf('%s/%s',
-#                  my_envir$output_dir,
-#                  my_envir$output_file))
-#    #print(ls(envir = parent.frame()))
-##    print(metadata)
-##    print(input_file)
-##    print(output_file)
-##    cat(getwd())
-#    cat('here')
-#    output_file
-#  }
-
   config$on_exit <- function() {
     # At this point, the output file will have been created.  Verify this to start.
     my_envir <- parent.frame()
@@ -74,15 +51,6 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
       }
       write_xml(in_file, 'rocument_temp/word/document.xml')
 
-      #j <- read_xml('rocument_temp/word/document.xml')
-      #k <- xml_find_all(j, "//w:p")
-      #for (i in seq_along(k)) {
-      #  if (grepl(pattern = "&lt;---HEADER---&gt;", k[[i]])) {
-      #    k[i] <- "<w:p><w:pPr><w:pStyle w:val=\"Heading4\"/></w:pPr><w:r><w:t>Information memorandum for the Director</w:t></w:r></w:p>"
-      #  }
-      #}
-      #write_xml(k, 'rocument_temp/word/document.xml')
-
       setwd('rocument_temp')
       zip(my_file, files = list.files())
       file.rename(from = my_file,
@@ -92,13 +60,6 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
     } else {
       stop('rocument:  Knitr file output does not seem to exist.')
     }
-    # print(file.exists(sprintf('%s/%s',
-    #                           my_envir$output_dir,
-    #                           my_envir$output_file)))
-    # cat(getwd())
-    # print(ls(envir = parent.frame()))
-    # print(my_envir$yaml_front_matter)
-    # print(my_envir$knit_input)
   }
   config
 }
@@ -219,7 +180,6 @@ clean_namespace <- function(add_file, skeleton_file) {
   temp <- gsub(' w:rsidRPr=\"\\w*\"', '', temp)
   temp <- gsub(' w:rsidRDefault=\"\\w*\"', '', temp)
   temp <- gsub(' w:rsidP=\"\\w*\"', '', temp)
-
 
   add_file <- read_xml(temp)
 }
