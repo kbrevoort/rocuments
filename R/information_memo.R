@@ -4,7 +4,7 @@
 #' @export
 information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_args = NULL, ...) {
 
-  ref_docx <- 'information2director_template_2010.docx'
+  ref_docx <- '../resources/just_table2.docx'
   config <- bookdown::word_document2(fig_caption = fig_caption,
                                      md_extensions = md_extensions,
                                      pandoc_args = pandoc_args,

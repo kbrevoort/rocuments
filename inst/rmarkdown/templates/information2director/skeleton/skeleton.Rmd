@@ -1,13 +1,11 @@
 ---
 from: 
 - "Ken Brevoort, x5-4916"
-- "Michelle Kambara"
+- "Michelle Kambara, x5-5555"
 through:  "David Silberman, Associate Director RMR"
 subject:  "Sample Memo"
 memo_date: "`r format(Sys.Date(), '%B %d, %Y')`"
-output: 
-  rocuments::information_memo:
-    reference_docx: just_table.docx
+output: rocuments::information_memo
 ---
 
 ???HEADER???
