@@ -4,9 +4,11 @@
 #' @export
 information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_args = NULL, ...) {
 
+  ref_docx <- 'information2director_template_2010.docx'
   config <- bookdown::word_document2(fig_caption = fig_caption,
                                      md_extensions = md_extensions,
                                      pandoc_args = pandoc_args,
+                                     reference_docx = ref_docx,
                                      ...)
 
   config$on_exit <- function() {
@@ -23,7 +25,7 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
 
       # Now get the header material to add
       #header_xml <- get_header_info(my_envir$yaml_front_matter)
-      new_header <- get_header_info(my_envir$yaml_front_matter)
+      new_header <- get_header_info(my_envir$yaml_front_matter, ref_docx)
 
       # Remove any bookmarks from the XML
       invisible(lapply(xml_find_all(new_header, '//w:bookmarkStart'), xml_remove))
@@ -68,7 +70,7 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
 #'
 #' This function will read in the header reference file and replace any codes with
 #' values supplied in the YAML header.
-get_header_info <- function(yaml_front_matter) {
+get_header_info <- function(yaml_front_matter, ref_docx) {
 
   yaml_front_matter <- convert_yaml(yaml_front_matter)
 
@@ -76,7 +78,7 @@ get_header_info <- function(yaml_front_matter) {
 
   # First, read in the header file.  Since I'm not writing the XML file out, I can
   # read directly from a docx file
-  in_file <- read_xml(unz('just_table.docx', 'word/document.xml'))
+  in_file <- read_xml(unz(ref_docx, 'word/document.xml'))
 
   # Check to make sure that in_file has only one child (otherwise, something is wrong)
   if (xml_length(in_file) > 1)
