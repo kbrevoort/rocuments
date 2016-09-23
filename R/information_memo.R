@@ -4,7 +4,8 @@
 #' @export
 information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_args = NULL, ...) {
 
-  ref_docx <- '../resources/information2director_template.docx'
+  ref_docx <- sprintf('%s/rmarkdown/templates/information2director/resources/information2director_template.docx',
+                      find.package('rocuments'))
   config <- bookdown::word_document2(fig_caption = fig_caption,
                                      md_extensions = md_extensions,
                                      pandoc_args = pandoc_args,
