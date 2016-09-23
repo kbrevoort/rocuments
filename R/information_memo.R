@@ -2,7 +2,8 @@
 #'
 #' @import xml2
 #' @export
-information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_args = NULL, ...) {
+information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_args = NULL,
+                             draft = TRUE, ...) {
 
   ref_docx <- sprintf('%s/rmarkdown/templates/information2director/resources/information2director_template.docx',
                       find.package('rocuments'))
@@ -60,8 +61,19 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
       }
       write_xml(in_file, 'rocument_temp/word/document.xml')
 
-      setwd('rocument_temp')
+      # If draft == FALSE then remove the DRAFT indicator from the header
+      if (!draft) {
+        in_file <- read_xml('rocument_temp/word/header1.xml')
+        for (i in seq_along(in_file)) {
+          if (xml_text(xml_child(in_file, i)) == 'DRAFT') {
+            replace_text(xml_child(in_file, i), '')
+          }
+        }
+        write_xml(in_file, 'rocument_temp/word/header1.xml')
+      }
 
+      # Re-zip file
+      setwd('rocument_temp')
       zip(my_file, files = list.files(), flags = '-r', zip = 'zip')
       file.rename(from = my_file,
                   to = sprintf('../%s', my_file))
@@ -142,8 +154,8 @@ replace_text <- function(node, new_text) {
     for (j in seq(2, length(temp))) {
       xml_text(temp[j]) <- ''
     }
-    xml_text(temp[1]) <- new_text
   }
+  xml_text(temp[1]) <- new_text
 }
 
 #'
