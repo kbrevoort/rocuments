@@ -3,10 +3,11 @@
 #' @import xml2
 #' @export
 information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_args = NULL,
-                             draft = TRUE, ...) {
+                             draft = TRUE, keep_old = FALSE, ...) {
 
-  ref_docx <- sprintf('%s/rmarkdown/templates/information2director/resources/information2director_template.docx',
-                      find.package('rocuments'))
+  #ref_docx <- sprintf('%s/rmarkdown/templates/information2director/resources/information2director_template.docx',
+  #                    find.package('rocuments'))
+  ref_docx <- '/Users/ken/Documents/template_files/revised_information_template.docx'
   config <- bookdown::word_document2(fig_caption = fig_caption,
                                      md_extensions = md_extensions,
                                      pandoc_args = pandoc_args,
@@ -50,7 +51,7 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
 
       my_text <- xml_find_all(in_file, '//w:p')
       for (i in seq(1, length(my_text)) ) {
-        if ('???HEADER???' %in% xml_text(my_text[i])) {
+        if ('&HEADER&' %in% xml_text(my_text[i])) {
           if (length(new_header) > 1) {
             for (j in seq(from = length(new_header), to = 2, by = -1)) {
               xml_add_sibling(my_text[i], new_header[j])
@@ -79,6 +80,10 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
                   to = sprintf('../%s', my_file))
       setwd('..')
       unlink('rocument_temp', recursive = TRUE)
+
+      # Unless directed to keep original pandoc output, remove it
+      if (!keep_old)
+        unlink(new_file)
     } else {
       stop('rocument:  Knitr file output does not seem to exist.')
     }
@@ -94,7 +99,7 @@ get_header_info <- function(yaml_front_matter, ref_docx) {
 
   yaml_front_matter <- convert_yaml(yaml_front_matter)
 
-  yaml_names <- sprintf('~~~%s~~~', tolower(names(yaml_front_matter)))
+  yaml_names <- sprintf('$%s$', tolower(names(yaml_front_matter)))
 
   # First, read in the header file.  Since I'm not writing the XML file out, I can
   # read directly from a docx file
