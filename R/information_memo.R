@@ -1,17 +1,40 @@
-#' Information Memo for Director
+#' Information Memo for the Director
 #'
-#' @import xml2
+#' Generate an information memo for the Director.
 #' @export
-information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_args = NULL,
-                             draft = TRUE, keep_old = FALSE, ...) {
+information_memo <- function(...) {
+  reference_docx <- sprintf('%s/rmarkdown/templates/information2director/resources/information2director_template.docx',
+                            find.package(package = 'rocuments'))
+  memo_engine(reference_docx = reference_docx, ...)
+}
+
+#' CCP Analysis Memo
+#'
+#' Generate a memo detailing the results of a CCP analysis.  If the results are to
+#' be circulated to the Directory, then use information_memo instead.
+#' @export
+ccp_memo <- function(...) {
+  reference_docx <- sprintf('%s/rmarkdown/templates/ccp_memo/resources/ccp_memo_template.docx',
+                            find.package(package = 'rocuments'))
+  memo_engine(reference_docx = reference_docx, ...)
+}
+
+#' Memo Engine
+#'
+#' This is the function that is called internally to generate the memos in different
+#' forms.  This is not meant to be called by the user.
+#' @import xml2
+memo_engine <- function(reference_docx = reference_docx, fig_caption = TRUE,
+                        md_extensions = NULL, pandoc_args = NULL,
+                        draft = TRUE, keep_old = FALSE, ...) {
 
   #ref_docx <- sprintf('%s/rmarkdown/templates/information2director/resources/information2director_template.docx',
   #                    find.package('rocuments'))
-  ref_docx <- '/Users/ken/Documents/template_files/revised_information_template.docx'
+  #ref_docx <- '/Users/ken/Documents/template_files/revised_information_template.docx'
   config <- bookdown::word_document2(fig_caption = fig_caption,
                                      md_extensions = md_extensions,
                                      pandoc_args = pandoc_args,
-                                     reference_docx = ref_docx,
+                                     reference_docx = reference_docx,
                                      ...)
 
   config$on_exit <- function() {
@@ -34,7 +57,7 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
 
       # Now get the header material to add
       #header_xml <- get_header_info(my_envir$yaml_front_matter)
-      new_header <- get_header_info(my_envir$yaml_front_matter, ref_docx)
+      new_header <- get_header_info(my_envir$yaml_front_matter, reference_docx)
 
       # Remove any bookmarks from the XML
       invisible(lapply(xml_find_all(new_header, '//w:bookmarkStart'), xml_remove))
@@ -95,7 +118,7 @@ information_memo <- function(fig_caption = TRUE, md_extensions = NULL, pandoc_ar
 #'
 #' This function will read in the header reference file and replace any codes with
 #' values supplied in the YAML header.
-get_header_info <- function(yaml_front_matter, ref_docx) {
+get_header_info <- function(yaml_front_matter, reference_docx) {
 
   yaml_front_matter <- convert_yaml(yaml_front_matter)
 
@@ -103,7 +126,7 @@ get_header_info <- function(yaml_front_matter, ref_docx) {
 
   # First, read in the header file.  Since I'm not writing the XML file out, I can
   # read directly from a docx file
-  in_file <- read_xml(unz(ref_docx, 'word/document.xml'))
+  in_file <- read_xml(unz(reference_docx, 'word/document.xml'))
 
   # Check to make sure that in_file has only one child (otherwise, something is wrong)
   if (xml_length(in_file) > 1)
@@ -163,7 +186,10 @@ replace_text <- function(node, new_text) {
   xml_text(temp[1]) <- new_text
 }
 
+#' Convert YAML
 #'
+#' This function reads in the YAML variables and converts any R code that is included
+#' into the values the code returns.
 convert_yaml <- function(yfm) {
   for (i in seq_along(yfm)) {
     for (j in seq(1, length(yfm[[i]]))) {
@@ -184,6 +210,13 @@ convert_yaml <- function(yfm) {
   yfm
 }
 
+#' Clean Namespace
+#'
+#' This function cleans the namespace file to remove formats that I don't believe
+#' need to be there.  I am not sure this file is necessary.  Consider deprecating it
+#' if you can confirm that the function does nothing of value.
+#'
+#' This function is not meant to be called by the user.
 clean_namespace <- function(add_file, skeleton_file) {
   # Find elements in the namespace that appear in new_file but not in skeleton_file
   bad_names <- setdiff(names(xml_ns(add_file)), names(xml_ns(skeleton_file)))
