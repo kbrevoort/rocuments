@@ -1,0 +1,21 @@
+---
+to: "Recipient"
+from: 
+- "Ken Brevoort, x5-4916"
+subject:  "Subject"
+memo_date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: rocuments::ccp_memo
+---
+
+&HEADER&
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      dpi = 300)
+
+library(ggplot2)
+library(magrittr)
+library(bookdown)
+```
+
+

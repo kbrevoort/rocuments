@@ -1,9 +1,9 @@
 Package: rocuments
 Type: Package
 Title: This package is for generating CFPB-specific documents in a Word docx format using knitr.
-Version: 0.1.0
 Author: Ken Brevoort
 Maintainer: Ken Brevoort <kenneth.brevoort@cfpb.gov>
+Version: 0.1.2
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Imports:

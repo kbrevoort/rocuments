@@ -7,10 +7,11 @@ memo_date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: rocuments::information_memo
 ---
 
-???HEADER???
+&HEADER&
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE,
+                      dpi = 300)
 
 library(ggplot2)
 library(magrittr)

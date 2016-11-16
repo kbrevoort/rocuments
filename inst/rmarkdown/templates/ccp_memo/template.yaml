@@ -1,0 +1,4 @@
+name: CCP Analysis Memo
+description: >
+  Template for creating a memo detailing an analysis done using the Consumer Credit Panel.
+create_dir: true

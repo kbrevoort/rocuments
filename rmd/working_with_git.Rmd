@@ -1,0 +1,17 @@
+---
+title: "Working with Git and GitHub"
+subtitle: "The Credit Information and Policy Guide"
+author: "Kenneth Brevoort"
+date: "9/29/2016"
+output: html_document
+---
+
+# Introduction
+
+Version control software is a powerful tool for tracking progress when conducting data analyses, 
+either when working alone or in teams.
+To the extent possible, the work done in the Credit Information and Policy Section
+should use version control software, most notably Git and GitHub.  
+This document will attempt to both describe the Git workflow as we will be implementing
+it and serve as a tutorial for users who are still getting up to speed.
+
